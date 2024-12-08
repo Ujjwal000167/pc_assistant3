@@ -120,3 +120,4 @@ if __name__ == "__main__":
             )
             say(response["choices"][0]["text"].strip())
 
+
