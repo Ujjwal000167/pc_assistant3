@@ -74,6 +74,27 @@ def search_web(query):
     search_url = f"https://www.google.com/search?q={search_query}"
     webbrowser.open(search_url)
 
+# Function to open an application based on user query
+def open_application(query):
+    # Check for known application names in the user's query
+    if "notepad" in query:
+        say("Starting Notepad...")
+        os.system("start notepad")
+    elif "calculator" in query:
+        say("Starting Calculator...")
+        os.system("start calc")
+    elif "vscode" in query:
+        say("Starting Visual Studio Code...")
+        os.system("start code")
+    elif "browser" in query:
+        say("Starting your default browser...")
+        os.system("start chrome")  # or "start firefox", "start edge" based on your default browser
+    elif "file explorer" in query:
+        say("Starting File Explorer...")
+        os.system("start explorer")
+    else:
+        say("Sorry, I cannot start that application.")
+
 # Main Function
 if __name__ == "__main__":
     openai.api_key = apikey
@@ -86,31 +107,28 @@ if __name__ == "__main__":
         if not query or "error" in query:
             continue
 
-        intent = classify_intent(query)
-
-        if intent == "open_website":
+        # Check for open website commands
+        if "open" in query:
             if open_website(query):  # Try opening a website
                 say("Opening the website...")
             else:
                 say("Sorry, I couldn't find that website.")
 
+        # Check for search command
         elif "search" in query or "find" in query:
             say("Searching the web...")
             search_web(query)  # Perform dynamic search
 
-        elif intent == "play_music":
-            say("Playing music...")
-            music_path = "path/to/your/music.mp3"  # Update this path with your music file location
-            os.system(f"start {music_path}")
+        # Check for start application commands
+        elif "start" in query:
+            open_application(query)  # Try starting an application
 
-        elif intent == "get_time":
-            now = datetime.datetime.now().strftime("%H:%M")
-            say(f"The time is {now}")
-
-        elif intent == "exit":
+        # Check for exit command
+        elif "exit" in query:
             say("Goodbye!")
             break
 
+        # Default response from AI
         else:
             say("I didn't understand that. Let me try using AI.")
             response = openai.Completion.create(
@@ -119,5 +137,3 @@ if __name__ == "__main__":
                 max_tokens=50
             )
             say(response["choices"][0]["text"].strip())
-
-
