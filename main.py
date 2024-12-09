@@ -7,28 +7,23 @@ import pyttsx3
 import speech_recognition as sr
 from config import apikey
 
-# Initialize Text-to-Speech Engine
 engine = pyttsx3.init()
 
-# Load the trained model and vectorizer
 with open("intent_model.pkl", "rb") as f:
     intent_model = pickle.load(f)
 
 with open("vectorizer.pkl", "rb") as f:
     vectorizer = pickle.load(f)
 
-# Function to classify intent
 def classify_intent(query):
     X = vectorizer.transform([query])
     intent = intent_model.predict(X)[0]
     return intent
 
-# Function to speak text
 def say(text):
     engine.say(text)
     engine.runAndWait()
 
-# Function to take voice input
 def take_command():
     recognizer = sr.Recognizer()
     with sr.Microphone() as source:
@@ -43,9 +38,8 @@ def take_command():
             print("Error:", e)
             return "Some error occurred."
 
-# Function to open a website based on user query
 def open_website(query):
-    # Dictionary of popular websites
+
     websites = {
         "youtube": "https://www.youtube.com",
         "google": "https://www.google.com",
@@ -88,7 +82,7 @@ def open_application(query):
         os.system("start code")
     elif "browser" in query:
         say("Starting your default browser...")
-        os.system("start chrome")  # or "start firefox", "start edge" based on your default browser
+        os.system("start chrome") 
     elif "file explorer" in query:
         say("Starting File Explorer...")
         os.system("start explorer")
@@ -107,29 +101,25 @@ if __name__ == "__main__":
         if not query or "error" in query:
             continue
 
-        # Check for open website commands
-        if "open" in query:
-            if open_website(query):  # Try opening a website
+               if "open" in query:
+            if open_website(query):  
                 say("Opening the website...")
             else:
                 say("Sorry, I couldn't find that website.")
 
-        # Check for search command
+      
         elif "search" in query or "find" in query:
             say("Searching the web...")
-            search_web(query)  # Perform dynamic search
+            search_web(query) 
 
-        # Check for start application commands
-        elif "start" in query:
-            open_application(query)  # Try starting an application
+               elif "start" in query:
+            open_application(query)  
 
-        # Check for exit command
-        elif "exit" in query:
+               elif "exit" in query:
             say("Goodbye!")
             break
 
-        # Default response from AI
-        else:
+             else:
             say("I didn't understand that. Let me try using AI.")
             response = openai.Completion.create(
                 model="text-davinci-003",
